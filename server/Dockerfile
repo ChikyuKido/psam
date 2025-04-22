@@ -6,7 +6,7 @@ COPY go.mod go.sum ./
 RUN go mod tidy
 
 COPY . .
-
+ENV CGO_ENABLED=1
 RUN go build -o psam .
 
 FROM alpine:latest
