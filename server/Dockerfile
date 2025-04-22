@@ -17,4 +17,4 @@ COPY --from=builder /app/psam .
 
 EXPOSE 8080
 
-CMD ["./psam"]
+CMD ["./psam","serve"]

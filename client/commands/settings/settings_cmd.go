@@ -24,6 +24,19 @@ var setApiKeyCmd = &cobra.Command{
 		}
 	},
 }
+var setURL = &cobra.Command{
+	Use:   "url [url]",
+	Short: "Set server url",
+	Args:  cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		err := services.SetURL(args[0])
+		if err != nil {
+			fmt.Println("Error:", err)
+		} else {
+			fmt.Println("URL set successfully!")
+		}
+	},
+}
 
 func Init() {
 	SettingsCmd.AddCommand(setApiKeyCmd)
