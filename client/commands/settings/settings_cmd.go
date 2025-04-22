@@ -40,4 +40,5 @@ var setURL = &cobra.Command{
 
 func Init() {
 	SettingsCmd.AddCommand(setApiKeyCmd)
+	SettingsCmd.AddCommand(setURL)
 }

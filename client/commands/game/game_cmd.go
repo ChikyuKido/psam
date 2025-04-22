@@ -41,6 +41,11 @@ var listGame = &cobra.Command{
 	Short: "List the games on the client or server",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		url, err := services.GetURL()
+		if err != nil {
+			fmt.Println("Error getting server url:", err)
+			return
+		}
 		location := args[0]
 		if location == "client" {
 			games, err := services.ListGames()
@@ -53,7 +58,7 @@ var listGame = &cobra.Command{
 				fmt.Printf("> %s: %s\n", game.GameName, game.DirPath)
 			}
 		} else if location == "server" {
-			request, err := util.MyClient.DoRequest("GET", "http://localhost:8080/api/v1/game/listGames", nil, "")
+			request, err := util.MyClient.DoRequest("GET", url+"/api/v1/game/listGames", nil, "")
 			if err != nil {
 				fmt.Println("Error getting game list:", err)
 				return
@@ -78,8 +83,13 @@ var getGameDetails = &cobra.Command{
 	Short: "Get game details for a game on the server",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		url, err := services.GetURL()
+		if err != nil {
+			fmt.Println("Error getting server url:", err)
+			return
+		}
 		game := args[0]
-		request, err := util.MyClient.DoRequest("GET", "http://localhost:8080/api/v1/game/getGameDetails/"+game, nil, "")
+		request, err := util.MyClient.DoRequest("GET", url+"/api/v1/game/getGameDetails/"+game, nil, "")
 		if err != nil {
 			fmt.Println("Error getting game list:", err)
 			return
@@ -92,6 +102,11 @@ var putGame = &cobra.Command{
 	Short: "Put a game to the server",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
+		url, err := services.GetURL()
+		if err != nil {
+			fmt.Println("Error getting server url:", err)
+			return
+		}
 		gameName := args[0]
 		version := args[1]
 		game, err := services.GetGame(gameName)
@@ -108,7 +123,7 @@ var putGame = &cobra.Command{
 			fmt.Println("Error zipping file:", err)
 			return
 		}
-		_, err = util.MyClient.UploadFile(fmt.Sprintf("http://localhost:8080/api/v1/game/uploadSave/%s/%s", gameName, version), "save", file, nil)
+		_, err = util.MyClient.UploadFile(fmt.Sprintf("%s/api/v1/game/uploadSave/%s/%s", url, gameName, version), "save", file, nil)
 		if err != nil {
 			fmt.Println("Error uploading file:", err)
 			return
@@ -121,6 +136,11 @@ var getGame = &cobra.Command{
 	Short: "Gets a game from the server",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
+		url, err := services.GetURL()
+		if err != nil {
+			fmt.Println("Error getting server url:", err)
+			return
+		}
 		gameName := args[0]
 		version := args[1]
 		game, err := services.GetGame(gameName)
@@ -132,7 +152,7 @@ var getGame = &cobra.Command{
 			fmt.Println("Game Path does not exist. Please update it")
 			return
 		}
-		file, err := util.MyClient.DoRequest("GET", fmt.Sprintf("http://localhost:8080/api/v1/game/getSave/%s/%s", gameName, version), nil, "")
+		file, err := util.MyClient.DoRequest("GET", fmt.Sprintf("%s/api/v1/game/getSave/%s/%s", url, gameName, version), nil, "")
 
 		err = util.UnzipFile(file, game.DirPath)
 		if err != nil {
